@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { getChatsStatus } from "@/app/dashboard/chat/actions";
 import { useSocket } from "./socket-context";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import type { ChatListFilter } from "@/modules/whatsapp/chat.service";
 
 interface ChatContact {
@@ -283,6 +284,7 @@ function SkeletonRow() {
 
 // ─── Main ──────────────────────────
 export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps) {
+    const t = useTranslations("chat");
     const [chats, setChats] = useState<ChatContact[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchInput, setSearchInput] = useState("");
@@ -292,6 +294,12 @@ export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps
     const [hasMore, setHasMore] = useState(true);
     const [filter, setFilter] = useState<ChatListFilter>("all");
     const [filterReady, setFilterReady] = useState(false);
+
+    const filterOptions: { value: ChatListFilter; label: string }[] = useMemo(() => [
+        { value: "all", label: t("filterAll") },
+        { value: "private", label: t("filterChats") },
+        { value: "groups", label: t("filterGroups") },
+    ], [t]);
     // Label dots per JID — {colorHex}[]
     const [chatLabelMap, setChatLabelMap] = useState<Map<string, {colorHex: string}[]>>(new Map());
 
@@ -456,8 +464,8 @@ export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps
     };
 
     const emptyLabel = searchQuery
-        ? "No chats match your search"
-        : filter === "groups" ? "No groups yet" : "No chats yet";
+        ? t("emptySearch")
+        : filter === "groups" ? t("emptyGroups") : t("emptyChats");
 
     return (
         <div className="flex flex-col h-full overflow-hidden bg-background">
@@ -465,7 +473,7 @@ export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps
             <div className="shrink-0 px-3 pt-3 pb-2 space-y-2 border-b border-border/10">
                 <div className="flex justify-between items-center">
                     <h3 className="font-semibold text-base text-foreground">
-                        Chats
+                        {t("title")}
                         {chats.length > 0 && <span className="ml-1.5 text-xs font-normal text-muted-foreground">({chats.length})</span>}
                     </h3>
                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg"
@@ -476,13 +484,13 @@ export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps
 
                 <div className="relative">
                     <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-                    <Input placeholder="Search chats..." value={searchInput}
+                    <Input placeholder={t("searchPlaceholder")} value={searchInput}
                         onChange={(e) => handleSearchChange(e.target.value)}
                         className="h-8 pl-8 text-sm bg-muted/50 border-0 rounded-lg focus-visible:ring-1" />
                 </div>
 
                 <div role="tablist" aria-label="Filter chats" className="flex gap-1 p-0.5 bg-muted/50 rounded-lg">
-                    {FILTER_OPTIONS.map(option => (
+                    {filterOptions.map(option => (
                         <button key={option.value} type="button" role="tab"
                             aria-selected={filter === option.value}
                             onClick={() => handleFilterChange(option.value)}
@@ -499,13 +507,13 @@ export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps
 
                 {isNewChatOpen && (
                     <div className="p-2.5 bg-muted/30 rounded-lg space-y-2 border border-border/40">
-                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Phone Number</Label>
+                        <Label className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{t("phoneNumber")}</Label>
                         <div className="flex gap-1.5">
                             <Input placeholder="628123456789" value={newChatNumber}
                                 onChange={(e) => setNewChatNumber(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && handleStartNewChat()}
                                 className="h-8 text-sm" />
-                            <Button size="sm" className="h-8 px-3" onClick={handleStartNewChat}>Go</Button>
+                            <Button size="sm" className="h-8 px-3" onClick={handleStartNewChat}>{t("go")}</Button>
                         </div>
                     </div>
                 )}
@@ -530,7 +538,7 @@ export function ChatList({ sessionId, onSelectChat, selectedJid }: ChatListProps
                         endReached={handleEndReached} increaseViewportBy={200}
                         components={{ Footer: () => hasMore && !loading ? (
                             <div className="py-4 text-center">
-                                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Scroll for more</span>
+                                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("scrollForMore")}</span>
                             </div>
                         ) : null }} />
                 )}
