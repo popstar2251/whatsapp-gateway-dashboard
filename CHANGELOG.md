@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- **Multi-Language UI (i18n)**: Internationalization foundation powered by `next-intl`. Supports English (`en`), Indonesian (`id`), and Brazilian Portuguese (`pt-BR`) with automatic cookie-based persistence, fallback to `DEFAULT_LANGUAGE`, and an in-app language switcher.
 - **Chat List Filter**: Added `All` / `Chats` / `Groups` tabs to the chat list. Filtering is done in SQL so pagination stays correct, realtime updates respect the active tab, and the selection is remembered per browser.
 
 ### Fixed
