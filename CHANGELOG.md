@@ -1,13 +1,29 @@
 ## [v1.7.0-beta.2] - 2026-10-19
 
 ### Added
-- **Multi-Language UI (i18n)**: Internationalization foundation powered by `next-intl`. Supports English (`en`), Indonesian (`id`), and Brazilian Portuguese (`pt-BR`) with automatic cookie-based persistence, fallback to `DEFAULT_LANGUAGE`, and an in-app language switcher.
-- **Chat List Filter**: Added `All` / `Chats` / `Groups` tabs to the chat list. Filtering is done in SQL so pagination stays correct, realtime updates respect the active tab, and the selection is remembered per browser.
-- **Unified Navigation Architecture**: Centralized navigation schema shared between desktop sidebar and mobile navigation drawer, ensuring complete feature and RBAC role parity across desktop and mobile devices.
+- **Comprehensive Multi-Language UI (i18n)** (#103): Full internationalization coverage powered by `next-intl` across the entire application:
+  - **Supported Locales**: English (`en`), Indonesian (`id`), and Brazilian Portuguese (`pt-BR`).
+  - **Full Dashboard Coverage**: Over 1,000+ localized UI keys with 100% key parity across all 3 catalogs covering headers, cards, tables, filters, forms, placeholders, dialogs, badges, empty states, and toast notifications.
+  - **All Pages Localized**: Dashboard Overview, Sessions & Session Access Management, Live Chat Interface & Interactive Message Builder Dialog, Interactive Tester, Broadcast, Recurring Scheduler, Auto Reply, Bot Settings, Contacts, Groups, Labels, Media Gallery, Sticker Maker, Inbox & Notifications Manager, Webhooks & Live Webhook Logs Dialog, System Resource Monitor, System Settings, User Management, Profile, and API Documentation.
+  - **Persistence & Fallback**: Cookie-based language selection persistence (`NEXT_LOCALE`), automatic fallback to `DEFAULT_LANGUAGE` or browser preference, and seamless language switcher dropdown in the navigation bar.
+  - **Automated Verification**: Automated ICU message syntax validation, placeholder/tag matching tests, and locale resolution test suites with zero ICU formatting errors.
+- **Chat List Categorization Filter** (#99): Added `All` / `Chats` (direct personal messages) / `Groups` tab filters to the chat list:
+  - Executed directly at database level via optimized SQL queries to maintain accurate pagination, unread counts, and infinite scroll performance.
+  - Real-time Socket.IO incoming message updates dynamically respect the active filter tab.
+  - Active tab preference is persisted per browser session via `localStorage`.
+- **Unified Navigation Architecture**:
+  - Centralized navigation groups and route items into a single source of truth configuration (`src/config/navigation.ts`).
+  - Achieved complete feature and RBAC role visibility parity between desktop sidebar and mobile navigation drawer.
+- **Session Access & Security Controls**: Added Session Access authorization page (`/dashboard/sessions/access`) and session guard components for granular user-session assignment and role validation.
+
+### Changed
+- **Interactive Message Dialog**: Refactored the interactive WhatsApp message trigger dialog in chat window to use `next-intl` translation keys with localized 1-click test triggers, custom composer inputs, button type selectors, and live WhatsApp bubble preview mockup.
+- **Scheduler Form UX**: Localized dynamic schedule types, interval selectors (minutes, hours, cron), day-of-week checkboxes, pending/history tabs, and execution status badges.
+- **Search & Filter Component**: Integrated fallback localization for search input placeholders and sorting selectors.
 
 ### Fixed
-- **Status Broadcast in Chat List**: `status@broadcast` no longer appears as a chat in the dashboard chat list. The REST API (`getChatsList` without a filter) is unchanged.
-- **Mobile Navigation Parity**: Synchronized Interactive Tester and Superadmin role visibility on mobile navigation drawer.
+- **Status Broadcast Filter**: Filtered out `status@broadcast` system entries from appearing in the dashboard chat list while preserving raw backend REST API endpoints intact.
+- **Mobile Navigation Parity**: Fixed missing Interactive Message Tester item on mobile drawer navigation and aligned Superadmin-only menu visibility across devices.
 
 ## [v1.7.0-beta.1] - 2026-09-21
 
