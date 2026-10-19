@@ -3,99 +3,14 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 import Link from "next/link";
-import {
-    LayoutDashboard,
-    MessageSquare,
-    Users,
-    Settings,
-    LogOut,
-    QrCode,
-    ImageIcon,
-    Webhook,
-    CalendarClock,
-    Bot,
-    Bell,
-    FileText,
-    Code,
-    UserCheck,
-    Megaphone,
-    HardDrive,
-    Activity,
-    UserCircle,
-    Tag,
-    MessageCircleReply,
-    UserPlus,
-    Sparkles,
-} from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import type messages from "@/i18n/messages/en.json";
+import { navGroups } from "./sidebar-nav";
 import pkg from "../../../package.json";
-
-interface NavGroup {
-    key: keyof typeof messages.nav.groups;
-    items: { href: string; key: keyof typeof messages.nav.items; icon: React.ElementType; external?: boolean; superadminOnly?: boolean }[];
-}
-
-// Keep in sync with sidebar-nav.tsx
-const navGroups: NavGroup[] = [
-    {
-        key: "main",
-        items: [
-            { href: "/dashboard", key: "dashboard", icon: LayoutDashboard },
-            { href: "/dashboard/sessions", key: "sessions", icon: QrCode },
-        ],
-    },
-    {
-        key: "messaging",
-        items: [
-            { href: "/dashboard/chat", key: "chat", icon: MessageSquare },
-            { href: "/dashboard/broadcast", key: "broadcast", icon: Megaphone },
-            { href: "/dashboard/interactive", key: "interactive", icon: Sparkles },
-            { href: "/dashboard/sticker", key: "sticker", icon: ImageIcon },
-        ],
-    },
-    {
-        key: "contacts",
-        items: [
-            { href: "/dashboard/contacts", key: "contacts", icon: UserCheck },
-            { href: "/dashboard/groups", key: "groups", icon: Users },
-            { href: "/dashboard/labels", key: "labels", icon: Tag },
-        ],
-    },
-    {
-        key: "automation",
-        items: [
-            { href: "/dashboard/bot-settings", key: "botSettings", icon: Bot },
-            { href: "/dashboard/autoreply", key: "autoReply", icon: MessageCircleReply },
-            { href: "/dashboard/profile", key: "botProfile", icon: UserCircle },
-            { href: "/dashboard/scheduler", key: "scheduler", icon: CalendarClock },
-            { href: "/dashboard/webhooks", key: "webhooks", icon: Webhook },
-        ],
-    },
-    {
-        key: "developer",
-        items: [
-            { href: "/docs", key: "apiDocs", icon: FileText },
-            { href: "/swagger", key: "swagger", icon: Code, external: true },
-        ],
-    },
-    {
-        key: "administration",
-        items: [
-            { href: "/dashboard/media", key: "media", icon: HardDrive },
-            { href: "/dashboard/sessions/access", key: "sessionAccess", icon: UserPlus },
-            { href: "/dashboard/users", key: "users", icon: Users },
-            { href: "/dashboard/settings", key: "settings", icon: Settings },
-            { href: "/dashboard/system-monitor", key: "systemMonitor", icon: Activity, superadminOnly: true },
-            { href: "/dashboard/notifications", key: "notifications", icon: Bell, superadminOnly: true },
-        ],
-    },
-];
 
 export function MobileNav({ appName = "WA-AKG" }: { appName?: string }) {
     const [open, setOpen] = useState(false);
@@ -125,9 +40,11 @@ export function MobileNav({ appName = "WA-AKG" }: { appName?: string }) {
 
                 <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-1">
                     {navGroups.map((group) => {
-                        const visibleItems = group.items.filter(
-                            (item) => !item.superadminOnly || userRole === "SUPERADMIN"
-                        );
+                        const visibleItems = group.items.filter((item) => {
+                            if (item.superadminOnly && userRole !== "SUPERADMIN") return false;
+                            if (item.allowedRoles && (!userRole || !item.allowedRoles.includes(userRole))) return false;
+                            return true;
+                        });
                         if (visibleItems.length === 0) return null;
 
                         return (
