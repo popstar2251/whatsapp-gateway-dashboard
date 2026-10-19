@@ -40,12 +40,12 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface NavGroup {
+export interface NavGroup {
     key: keyof typeof messages.nav.groups;
     items: NavItem[];
 }
 
-interface NavItem {
+export interface NavItem {
     href: string;
     key: keyof typeof messages.nav.items;
     icon: React.ElementType;
@@ -54,7 +54,7 @@ interface NavItem {
     allowedRoles?: string[];
 }
 
-const navGroups: NavGroup[] = [
+export const navGroups: NavGroup[] = [
     {
         key: "main",
         items: [
