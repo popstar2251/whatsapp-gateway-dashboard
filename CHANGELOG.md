@@ -1,11 +1,13 @@
-## [Unreleased]
+## [v1.7.0-beta.2] - 2026-10-19
 
 ### Added
 - **Multi-Language UI (i18n)**: Internationalization foundation powered by `next-intl`. Supports English (`en`), Indonesian (`id`), and Brazilian Portuguese (`pt-BR`) with automatic cookie-based persistence, fallback to `DEFAULT_LANGUAGE`, and an in-app language switcher.
 - **Chat List Filter**: Added `All` / `Chats` / `Groups` tabs to the chat list. Filtering is done in SQL so pagination stays correct, realtime updates respect the active tab, and the selection is remembered per browser.
+- **Unified Navigation Architecture**: Centralized navigation schema shared between desktop sidebar and mobile navigation drawer, ensuring complete feature and RBAC role parity across desktop and mobile devices.
 
 ### Fixed
 - **Status Broadcast in Chat List**: `status@broadcast` no longer appears as a chat in the dashboard chat list. The REST API (`getChatsList` without a filter) is unchanged.
+- **Mobile Navigation Parity**: Synchronized Interactive Tester and Superadmin role visibility on mobile navigation drawer.
 
 ## [v1.7.0-beta.1] - 2026-09-21
 
